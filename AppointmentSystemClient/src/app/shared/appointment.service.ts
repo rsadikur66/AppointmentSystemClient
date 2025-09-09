@@ -13,6 +13,11 @@ export class AppointmentService {
    getAppointments(pageIndex: number, pageSize: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/getPagedAppointments?page=${pageIndex + 1}&pageSize=${pageSize}&sortBy=AppointmentDate&sortOrder=DESC`);
   }
+
+  getMedicinesByAppointmentId(appointmentId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/MedicineByAppointment/${appointmentId}`);
+  }
+
   insertAppointment(appointment: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, appointment);
   }

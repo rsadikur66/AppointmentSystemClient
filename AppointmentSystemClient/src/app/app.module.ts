@@ -19,21 +19,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';  // ✅ correct import
 import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon'; // এই line টি যোগ করুন
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MedicineDialogComponent } from './medicine-dialog/medicine-dialog.component'; // এই line টি যোগ করুন
 
 @NgModule({
   declarations: [
     AppComponent,
-    AppointmentComponent
+    AppointmentComponent,
+    MedicineDialogComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,     
     AppRoutingModule,HttpClientModule, BrowserAnimationsModule,
    FormsModule,
     MatFormFieldModule,MatDatepickerModule,MatInputModule,MatNativeDateModule,
     MatSelectModule,MatRadioModule,MatButtonModule,ReactiveFormsModule,MatSnackBarModule,
-    MatPaginatorModule,MatTableModule,MatIconModule
+    MatPaginatorModule,MatTableModule,MatIconModule,MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

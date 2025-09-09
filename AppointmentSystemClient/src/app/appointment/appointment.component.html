@@ -131,8 +131,13 @@
 </div> -->
 
   <div class="row">
-  <table mat-table [dataSource]="appointments" class="mat-elevation-z8">
+    <mat-form-field appearance="outline">
+  <mat-label>Search</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Search appointments">
+</mat-form-field>
+  <table mat-table [dataSource]="dataSource"  class="mat-elevation-z8">
     
+     
     <!-- Appointment ID Column -->
     <ng-container matColumnDef="appointmentId">
       <th mat-header-cell *matHeaderCellDef>ID</th>
@@ -257,6 +262,9 @@
           <button mat-icon-button color="warn" (click)="onDelete(element)" title="Delete">
             <mat-icon>delete</mat-icon>
           </button>
+          <button mat-icon-button color="accent" (click)="openMedicineDialog(element)">
+      <mat-icon>medical_services</mat-icon>
+    </button>
         </ng-container>
         <ng-container *ngIf="editedRow === element.appointmentId">
           <button mat-icon-button color="accent" (click)="saveEdit(element)" title="Save">
@@ -265,12 +273,14 @@
           <button mat-icon-button (click)="cancelEdit()" title="Cancel">
             <mat-icon>cancel</mat-icon>
           </button>
+           
         </ng-container>
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    
   </table>
 
   <mat-paginator [length]="totalAppointments"
