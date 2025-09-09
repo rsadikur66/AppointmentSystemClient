@@ -171,6 +171,17 @@ openMedicineDialog(appointment: any) {
   }
 
   saveEdit(element: any): void {
+    debugger;
+    // Visit Type validation
+  if (!element.visitType || element.visitType.trim() === '') {
+    this.snackBar.open('Please select a Visit Type before saving.', 'Close', {
+      duration: 3000,           // কত সেকেন্ড show করবে
+      horizontalPosition: 'right', // left | center | right
+      verticalPosition: 'top',     // top | bottom
+      panelClass: ['error-snackbar'] // custom style চাইলে
+    });
+    return; // stop execution, API call হবে না
+  }
     this.appointmentService.updateAppointment(element.appointmentId, element).subscribe({
       next: () => {
         this.editedRow = null;

@@ -23,11 +23,18 @@ export class AppointmentService {
   }
 
   updateAppointment(id: number, appointment: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}`, appointment);
+    return this.http.put(`${this.apiUrl}/UpdateAppointment/${id}`, appointment);
   }
 
   // Delete appointment method (আপনার已有的)
   deleteAppointment(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+  saveMedicines(prescriptions: any[]): Observable<any> {
+    return this.http.post(`${this.apiUrl}/SavePrescriptions`, prescriptions);
+  }
+
+
+
+
 }

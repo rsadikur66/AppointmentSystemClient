@@ -210,11 +210,15 @@
             element.visitType === '2' ? 'Follow-up' : element.visitType}}
         </ng-container>
         <ng-template #editVisitType>
-          <select matInput [(ngModel)]="element.visitType">
+          <select matInput [(ngModel)]="element.visitType" name="visitType" required>
+            <option value="" disabled selected>-- Select Visit Type --</option>
             <option value="1">First Visit</option>
             <option value="2">Follow-up</option>
             
           </select>
+          <div *ngIf="!element.visitType">
+  <span style="color:red">Visit Type is required.</span>
+</div>
         </ng-template>
       </td>
     </ng-container>
