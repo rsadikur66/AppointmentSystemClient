@@ -19,7 +19,7 @@ export class PrescriptionReportComponent implements OnInit {
   }
 
   loadPrescription() {
-    this.http.get<any[]>('https://localhost:7151/api/Appointment/prescriptionReport/1') // API endpoint
+    this.http.get<any[]>('https://localhost:7151/api/Appointment/prescriptionReport/1') 
       .subscribe(res => {
         this.prescriptionData = res;
       });

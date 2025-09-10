@@ -18,7 +18,7 @@ export class MedicineDialogComponent implements OnInit {
   medicineList: any[] = [];
   displayedColumns: string[] = ['medicineName', 'dosage', 'startDate', 'endDate', 'notes', 'actions'];
   prescriptions: any[] = [];
-  prescriptionList: any[] = []; // temporary list
+  prescriptionList: any[] = [];
   selectedMedicine: any = null;
   appointmentIdParam :any = '';
   prescription: any = {
@@ -39,22 +39,6 @@ export class MedicineDialogComponent implements OnInit {
   ngOnInit(): void {
   }
 
- 
- onMedicineChange(value: any) {
-    console.log('👉 Selected Medicine ID:', value);
-
-    const selectedObj = this.medicines.find(m => m.id === value);
-    console.log('👉 Full Medicine Object:', selectedObj);
-
-    this.selectedMedicine = selectedObj;
-  }
-  // loadMedicines(appointmentId: number) {
-  //   // API থেকে ওই appointment এর medicine লিস্ট আনবে
-  //   this.appointmentService.getMedicinesByAppointmentId(appointmentId).subscribe(res => {
-  //     this.medicines = res;
-  //   });
-  // }
-
  loadMedicines() {
   debugger;
     this.http.get<any[]>('https://localhost:7151/api/Appointment/getAllMedicinesList')
@@ -66,15 +50,14 @@ loadPrescription(appointmentId: number) {
         this.medicineList = res;
       });
   }
- // Add medicine to temporary list
+
   addMedicine() {
-  // copy current prescription object to avoid reference issues
   this.prescriptionList.push({ 
     ...this.prescription,
     appointmentId: this.data.appointmentId
   });
 
-  // reset form for next input
+  
   this.prescription = {
     medicineId: null,
     dosage: '',
@@ -83,7 +66,7 @@ loadPrescription(appointmentId: number) {
     notes: ''
   };
 }
-// Save all medicines to DB
+
 saveAllMedicines() {
   debugger;
     this.appointmentService.saveMedicines(this.prescriptionList).subscribe({
@@ -95,7 +78,7 @@ saveAllMedicines() {
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
         });
-        this.prescriptionList = []; // clear after saving
+        this.prescriptionList = [];
       },
       error: (err) => {
         console.error(err);
@@ -114,11 +97,11 @@ getMedicineName(id: number) {
   return med ? med.name : '';
 }
   editRow(row: any) {
-  row.backup = { ...row }; // backup copy রাখলাম cancel এর জন্য
+  row.backup = { ...row }; 
   row.isEdit = true;
 }
 cancelEdit(row: any) {
-  Object.assign(row, row.backup); // পুরনো ডাটা restore
+  Object.assign(row, row.backup); 
   delete row.backup;
   row.isEdit = false;
 }
@@ -154,7 +137,7 @@ saveRow(row: any) {
       this.snackBar.open(res.message, 'Close', {
         duration: 3000,  // 3 seconds
         verticalPosition: 'top',
-        panelClass: ['success-snackbar']  // চাইলে CSS ক্লাস দিয়ে style দিতে পারো
+        panelClass: ['success-snackbar'] 
       });
     },
     error: (err) => {

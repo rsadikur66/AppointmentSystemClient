@@ -17,12 +17,12 @@ import { MatNativeDateModule } from '@angular/material/core';
 import {MatRadioModule} from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatPaginatorModule } from '@angular/material/paginator';  // ✅ correct import
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MedicineDialogComponent } from './medicine-dialog/medicine-dialog.component';
-import { PrescriptionReportComponent } from './prescription-report/prescription-report.component'; // এই line টি যোগ করুন
+import { PrescriptionReportComponent } from './prescription-report/prescription-report.component';
 
 @NgModule({
   declarations: [

@@ -23,7 +23,7 @@ export class AppointmentComponent implements OnInit {
   editedRow: number | null = null;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new MatTableDataSource<any>();
-  // 👇 একটাই object যেটায় form-এর সব field থাকবে
+  
   appointment: any = {
     patientId: '',
     doctorId: '',
@@ -53,7 +53,7 @@ openMedicineDialog(appointment: any) {
 
   dialogRef.afterClosed().subscribe(result => {
     if (result === 'updated') {
-      this.loadAppointments(0, 10); // reload appointments if medicine updated
+      this.loadAppointments(0, 10); 
     }
   });
 }
@@ -74,7 +74,7 @@ openMedicineDialog(appointment: any) {
         next: (res) => {
           this.loadAppointments(0,10);
           this.snackBar.open('Appointment saved successfully!', 'Close', {
-            duration: 3000,       // 3 seconds
+            duration: 3000,       
             horizontalPosition: 'right',
             verticalPosition: 'top',
           });
@@ -123,20 +123,13 @@ openMedicineDialog(appointment: any) {
     this.loadAppointments(this.currentPage, this.pageSize);
   }
 
-  // 🖊️ Edit Button Click
-  onEdit(element: any): void {
-    console.log("Edit clicked", element);
-    // এখানে তুমি dialog খুলতে পারো অথবা form এ value বসাতে পারো
-    // উদাহরণ:
-    // const dialogRef = this.dialog.open(AppointmentEditDialog, { data: element });
-  }
+  
 
-  // 🗑️ Delete Button Click
   onDelete(element: any): void {
     if (confirm(`Are you sure you want to delete appointment for ${element.patientName}?`)) {
       this.appointmentService.deleteAppointment(element.appointmentId).subscribe({
         next: () => {
-           this.loadAppointments(0, 10); // আবার reload করবে
+           this.loadAppointments(0, 10); 
         },
         error: (err) => console.error(err)
       });
@@ -167,7 +160,7 @@ openMedicineDialog(appointment: any) {
     this.appointmentService.updateAppointment(element.appointmentId, element).subscribe({
       next: () => {
         this.editedRow = null;
-        this.loadAppointments(this.currentPage, this.pageSize); // reload after update
+        this.loadAppointments(this.currentPage, this.pageSize); 
       },
       error: (err: any) => console.error('Update error:', err)
     });
