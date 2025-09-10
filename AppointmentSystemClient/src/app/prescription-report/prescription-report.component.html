@@ -1,0 +1,24 @@
+<p>prescription-report works!</p>
+<div #reportContent>
+  <h2>Prescription Report</h2>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Medicine</th>
+        <th>Dosage</th>
+        <th>Frequency</th>
+        <th>Duration</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of prescriptionData">
+        <td>{{ item.medicineName }}</td>
+        <td>{{ item.dosage }}</td>
+        <td>{{ item.frequency }}</td>
+        <td>{{ item.duration }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<button (click)="printReport()">Print</button>

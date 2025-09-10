@@ -72,6 +72,7 @@ openMedicineDialog(appointment: any) {
     this.appointmentService.insertAppointment(this.appointment)
       .subscribe({
         next: (res) => {
+          this.loadAppointments(0,10);
           this.snackBar.open('Appointment saved successfully!', 'Close', {
             duration: 3000,       // 3 seconds
             horizontalPosition: 'right',
@@ -88,22 +89,6 @@ openMedicineDialog(appointment: any) {
       });
   }
 
-  // loadAppointments(pageIndex: number, pageSize: number) {
-  //   this.appointmentService.getAppointments(pageIndex, pageSize).subscribe({
-  //     next: (res:any) => {
-  //       debugger;
-  //       this.appointments = res.data.map((a:any) => ({
-  //     ...a,
-  //     appointmentDate: new Date(a.appointmentDate),  // ✅ Date object
-  //     patientId: a.patientId,
-  //     doctorId: a.doctorId
-  //   }));
-  //   this.totalAppointments = res.total;
-  // },
-  // error: (err) => console.error(err)
-  //   });
-  // }
-
   loadAppointments(pageIndex: number, pageSize: number) {
     this.appointmentService.getAppointments(pageIndex, pageSize).subscribe({
       next: (res: any) => {
@@ -111,13 +96,11 @@ openMedicineDialog(appointment: any) {
           ...a,
           appointmentDate: new Date(a.appointmentDate)
         }));
-        this.dataSource = new MatTableDataSource<any>(data);  // <-- এখানে ডেটা bind করো
+        this.dataSource = new MatTableDataSource<any>(data);
         this.totalAppointments = res.total;
 
-        // paginator connect করো
         this.dataSource.paginator = this.paginator;
 
-        // filterPredicate কাস্টমাইজ করতে চাইলে এখানে লিখতে পারো
         this.dataSource.filterPredicate = (row, filter: string) => {
           return row.patientName.toLowerCase().includes(filter) ||
             row.doctorName.toLowerCase().includes(filter) ||
@@ -150,14 +133,14 @@ openMedicineDialog(appointment: any) {
 
   // 🗑️ Delete Button Click
   onDelete(element: any): void {
-    // if (confirm(`Are you sure you want to delete appointment for ${element.patientName}?`)) {
-    //   this.appointmentService.deleteAppointment(element.id).subscribe({
-    //     next: () => {
-    //       this.loadAppointments(); // আবার reload করবে
-    //     },
-    //     error: (err) => console.error(err)
-    //   });
-    // }
+    if (confirm(`Are you sure you want to delete appointment for ${element.patientName}?`)) {
+      this.appointmentService.deleteAppointment(element.appointmentId).subscribe({
+        next: () => {
+           this.loadAppointments(0, 10); // আবার reload করবে
+        },
+        error: (err) => console.error(err)
+      });
+    }
   }
 
 
@@ -171,16 +154,15 @@ openMedicineDialog(appointment: any) {
   }
 
   saveEdit(element: any): void {
-    debugger;
-    // Visit Type validation
+    debugger;    
   if (!element.visitType || element.visitType.trim() === '') {
     this.snackBar.open('Please select a Visit Type before saving.', 'Close', {
-      duration: 3000,           // কত সেকেন্ড show করবে
-      horizontalPosition: 'right', // left | center | right
-      verticalPosition: 'top',     // top | bottom
-      panelClass: ['error-snackbar'] // custom style চাইলে
+      duration: 3000,           
+      horizontalPosition: 'right', 
+      verticalPosition: 'top',     
+      panelClass: ['error-snackbar'] 
     });
-    return; // stop execution, API call হবে না
+    return;
   }
     this.appointmentService.updateAppointment(element.appointmentId, element).subscribe({
       next: () => {
@@ -191,5 +173,86 @@ openMedicineDialog(appointment: any) {
     });
   }
 
+// <p><b>Appointment ID:</b> ${element.appointmentId}</p>
+
+
+onPrint(element: any) {
+  this.http.get<any[]>(`https://localhost:7151/api/Appointment/getPrescriptionReport/${element.appointmentId}`)
+    .subscribe(data => {
+      // Date Formatting
+      let appointmentDate = new Date(element.appointmentDate);
+      debugger;
+      let formattedAppointmentDate = appointmentDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      // HTML Report content
+      let reportHtml = `
+        <h2 style="text-align:center;">Prescription Report</h2>
+        
+        <p><b>Patient:</b> ${element.patientName}</p>
+        <p><b>Doctor:</b> ${element.doctorName}</p>
+        <p><b>Date:</b> ${formattedAppointmentDate}</p>
+        <p><b>Visit Type:</b> ${element.visitType}</p>
+        <table border="1" style="border-collapse:collapse; width:100%">
+          <thead>
+            <tr>
+              <th>Medicine</th>
+              <th>Dosage</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      data.forEach(item => {
+        let startDate = new Date(item.startDate);
+        let formattedStartDate = startDate.toLocaleDateString('en-US');
+
+        let endDate = new Date(item.endDate);
+        let formattedEndDate = endDate.toLocaleDateString('en-US');
+        
+        reportHtml += `
+          <tr>
+            <td>${item.medicineName}</td>
+            <td>${item.dosage}</td>
+            <td>${formattedStartDate}</td>
+            <td>${formattedEndDate}</td>
+            <td>${item.notes}</td>
+          </tr>
+        `;
+      });
+
+      reportHtml += `</tbody></table>`;
+
+      // New popup window for printing
+      const popupWin = window.open('', '_blank', 'width=800,height=600');
+      if (popupWin) {
+        popupWin.document.open();
+        popupWin.document.write(`
+          <html>
+            <head>
+              <title>Print Report</title>
+              <style>
+                @media print {
+                  body { margin: 0; padding: 10px; }
+                  table, th, td { border: 1px solid black; border-collapse: collapse; padding: 5px; }
+                  th, td { text-align: left; }
+                }
+              </style>
+            </head>
+            <body onload="window.print();">
+              ${reportHtml}
+            </body>
+          </html>
+        `);
+        popupWin.document.close();
+      }
+    });
+}
 
 }

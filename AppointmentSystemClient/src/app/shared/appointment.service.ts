@@ -15,7 +15,7 @@ export class AppointmentService {
   }
 
   getMedicinesByAppointmentId(appointmentId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/MedicineByAppointment/${appointmentId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/getMedicinesByAppointmentId/${appointmentId}`);
   }
 
   insertAppointment(appointment: any): Observable<any> {
@@ -28,12 +28,23 @@ export class AppointmentService {
 
   // Delete appointment method (আপনার已有的)
   deleteAppointment(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    debugger;
+    return this.http.delete(`${this.apiUrl}/deleteAppointment/${id}`);
   }
   saveMedicines(prescriptions: any[]): Observable<any> {
+    debugger;
     return this.http.post(`${this.apiUrl}/SavePrescriptions`, prescriptions);
   }
 
+  updateMedicine(medicine: any) {
+    debugger;
+  return this.http.put<any>(`${this.apiUrl}/updatePrescription`, medicine);
+}
+
+
+deleteMedicine(prescriptionId: number) {
+  return this.http.delete<any>(`${this.apiUrl}/deletePrescription/${prescriptionId}`);
+}
 
 
 

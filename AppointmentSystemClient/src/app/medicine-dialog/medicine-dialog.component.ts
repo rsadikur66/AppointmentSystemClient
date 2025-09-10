@@ -15,11 +15,12 @@ import { MatSelectModule } from '@angular/material/select';
 
 export class MedicineDialogComponent implements OnInit {
   medicines: any[] = [];
+  medicineList: any[] = [];
+  displayedColumns: string[] = ['medicineName', 'dosage', 'startDate', 'endDate', 'notes', 'actions'];
   prescriptions: any[] = [];
   prescriptionList: any[] = []; // temporary list
-  displayedColumns: string[] = ['name', 'dosage', 'actions'];
   selectedMedicine: any = null;
-
+  appointmentIdParam :any = '';
   prescription: any = {
    medicineId: '',
   dosage: '',
@@ -31,6 +32,7 @@ export class MedicineDialogComponent implements OnInit {
 
   constructor(private http: HttpClient,private snackBar: MatSnackBar,private appointmentService: AppointmentService,private dialogRef: MatDialogRef<MedicineDialogComponent>,@Inject(MAT_DIALOG_DATA) public data: any) { 
     this.loadPrescription(data.appointmentId);
+    this.appointmentIdParam = data.appointmentId;
     this.loadMedicines();
   }
 
@@ -58,14 +60,11 @@ export class MedicineDialogComponent implements OnInit {
     this.http.get<any[]>('https://localhost:7151/api/Appointment/getAllMedicinesList')
       .subscribe(data => this.medicines = data);
   }
-loadPrescription(appointment:any) {
-  debugger;
-  this.appointmentService.getMedicinesByAppointmentId(appointment.appointmentId).subscribe(res => {
-    appointment.medicines = res;
-  });
-  debugger;
-    this.http.get<any[]>('https://localhost:7151/api/Appointment/getAllMedicinesList')
-      .subscribe(data => this.medicines = data);
+loadPrescription(appointmentId: number) {
+    this.appointmentService.getMedicinesByAppointmentId(appointmentId)
+      .subscribe(res => {
+        this.medicineList = res;
+      });
   }
  // Add medicine to temporary list
   addMedicine() {
@@ -89,6 +88,7 @@ saveAllMedicines() {
   debugger;
     this.appointmentService.saveMedicines(this.prescriptionList).subscribe({
       next: (res:any) => {
+         this.loadPrescription(this.appointmentIdParam);
         console.log('Saved successfully');
         this.snackBar.open('Medicines saved successfully!', 'Close', {
           duration: 3000,
@@ -107,18 +107,66 @@ saveAllMedicines() {
       }
     });
   }
+
 getMedicineName(id: number) {
   debugger;
   const med = this.medicines.find(m => m.medicineID === id);
   return med ? med.name : '';
 }
-  editMedicine(med: any) {
-    // medicine edit করার ব্যবস্থা
-  }
+  editRow(row: any) {
+  row.backup = { ...row }; // backup copy রাখলাম cancel এর জন্য
+  row.isEdit = true;
+}
+cancelEdit(row: any) {
+  Object.assign(row, row.backup); // পুরনো ডাটা restore
+  delete row.backup;
+  row.isEdit = false;
+}
+saveRow(row: any) {
+  debugger;
+  row.isEdit = false;
+  delete row.backup;
 
-  deleteMedicine(id: number) {
-    // medicine delete করার API call
-  }
+  this.appointmentService.updateMedicine(row).subscribe({
+    next: (res) => {
+      this.snackBar.open(res.message, 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['success-snackbar']
+      });
+    },
+    error: (err) => {
+      this.snackBar.open('Update failed! Please try again.', 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+    }
+  });
+}
+
+
+ deleteRow(prescriptionId: number) {
+  debugger;
+  this.appointmentService.deleteMedicine(prescriptionId).subscribe({
+    next: (res) => {
+      this.medicineList = this.medicineList.filter(m => m.prescriptionId !== prescriptionId);
+      this.snackBar.open(res.message, 'Close', {
+        duration: 3000,  // 3 seconds
+        verticalPosition: 'top',
+        panelClass: ['success-snackbar']  // চাইলে CSS ক্লাস দিয়ে style দিতে পারো
+      });
+    },
+    error: (err) => {
+      this.snackBar.open('Delete failed! Please try again.', 'Close', {
+        duration: 3000,
+        verticalPosition: 'top',
+        panelClass: ['error-snackbar']
+      });
+    }
+  });
+}
+
 
   close() {
     this.dialogRef.close('updated');

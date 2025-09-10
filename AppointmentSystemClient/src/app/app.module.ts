@@ -21,13 +21,15 @@ import { MatPaginatorModule } from '@angular/material/paginator';  // ✅ correc
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MedicineDialogComponent } from './medicine-dialog/medicine-dialog.component'; // এই line টি যোগ করুন
+import { MedicineDialogComponent } from './medicine-dialog/medicine-dialog.component';
+import { PrescriptionReportComponent } from './prescription-report/prescription-report.component'; // এই line টি যোগ করুন
 
 @NgModule({
   declarations: [
     AppComponent,
     AppointmentComponent,
-    MedicineDialogComponent
+    MedicineDialogComponent,
+    PrescriptionReportComponent
   ],
   imports: [
     BrowserModule,
